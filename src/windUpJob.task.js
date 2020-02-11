@@ -1,4 +1,6 @@
 const core = require('@actions/core');
+const slackifyMarkdown = require('slackify-markdown');
+
 const outputs = require('./outputs.json');
 
 /**
@@ -27,11 +29,13 @@ module.exports = async (result) => {
   const {version, notes} = nextRelease;
   const [major, minor, patch] = version.split('.');
 
+  const slackNotes = slackifyMarkdown(notes).replace('|', '|v');
+
   // set outputs
   core.setOutput(outputs.new_release_published, 'true');
   core.setOutput(outputs.new_release_version, version);
   core.setOutput(outputs.new_release_major_version, major);
   core.setOutput(outputs.new_release_minor_version, minor);
   core.setOutput(outputs.new_release_patch_version, patch);
-  core.setOutput(outputs.new_release_notes, notes);
+  core.setOutput(outputs.new_release_notes, slackNotes);
 };
